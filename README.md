@@ -18,7 +18,10 @@ npm run preview:public
 
 ## GitHub Pages 部署
 
-仓库推送到 `main` 分支后，GitHub Actions 会自动构建并发布到 GitHub Pages。
+默认采用 GitHub Pages 分支发布模式：
+
+- `main` 分支保存源码
+- `gh-pages` 分支保存构建后的静态站点
 
 推荐仓库名：
 
