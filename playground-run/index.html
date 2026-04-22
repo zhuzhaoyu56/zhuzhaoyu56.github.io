@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="操场人物三维运动展示页，通过浏览器加载 GLB 模型并实现操场巡走、视角交互和状态展示。"
+    />
+    <title>操场人物运动三维展示</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/playground-run/assets/index-wm52jbOo.js"></script>
+    <link rel="stylesheet" crossorigin href="/playground-run/assets/index-B9t5YKgD.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient-orb orb-left"></div>
+      <div class="ambient-orb orb-right"></div>
+
+      <header class="hero surface">
+        <div class="hero-copy">
+          <p class="eyebrow">Web 3D Sports Visualization</p>
+          <h1>操场人物运动三维展示页</h1>
+          <p class="hero-text">
+            将人物 GLB 模型加载到浏览器中，放入操场运动场景，提供巡走演示、镜头切换、跟拍与基础状态监控，适合作为公开访问的展示页面。
+          </p>
+
+          <div class="hero-pills">
+            <span class="pill">Three.js</span>
+            <span class="pill">GLTFLoader</span>
+            <span class="pill">GitHub Pages</span>
+            <span class="pill">程序化骨骼行走</span>
+          </div>
+        </div>
+
+        <div class="hero-metrics">
+          <article class="metric-card highlight">
+            <span>模型状态</span>
+            <strong id="status-text">等待人物入场</strong>
+          </article>
+          <article class="metric-card">
+            <span>当前模式</span>
+            <strong id="motion-label">匀速巡走</strong>
+          </article>
+          <article class="metric-card">
+            <span>镜头视角</span>
+            <strong id="camera-label">操场总览</strong>
+          </article>
+          <article class="metric-card">
+            <span>模型文件</span>
+            <strong>character.glb</strong>
+          </article>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="surface stage-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">3D Stage</p>
+              <h2>人物操场巡走场景</h2>
+            </div>
+
+            <div class="button-row compact">
+              <button class="ghost-button active" data-camera="overview">总览</button>
+              <button class="ghost-button" data-camera="sideline">场边</button>
+              <button class="ghost-button" data-camera="follow">跟拍</button>
+            </div>
+          </div>
+
+          <div class="stage-shell">
+            <div class="stage-root" id="stage-root"></div>
+
+            <div class="loading-panel" id="loading-panel">
+              <span class="loading-label">加载模型与操场资源</span>
+              <strong id="loading-text">准备开始…</strong>
+              <div class="progress-track">
+                <div class="progress-bar" id="progress-bar"></div>
+              </div>
+            </div>
+
+            <div class="hud">
+              <article class="hud-card">
+                <span>圈数</span>
+                <strong id="lap-label">0.00 圈</strong>
+              </article>
+              <article class="hud-card">
+                <span>当前区域</span>
+                <strong id="zone-label">南侧直道</strong>
+              </article>
+              <article class="hud-card">
+                <span>速度倍率</span>
+                <strong id="speed-label">1.00x</strong>
+              </article>
+            </div>
+          </div>
+
+          <div class="panel-footer">
+            <p id="scene-note">
+              鼠标左键旋转视角，滚轮缩放，右键平移。页面已针对公开访问做模型压缩与性能优化。
+            </p>
+          </div>
+        </section>
+
+        <aside class="sidebar">
+          <section class="surface side-card">
+            <div class="card-head">
+              <p class="eyebrow">Motion</p>
+              <h2>人物运动</h2>
+            </div>
+
+            <div class="activity-grid">
+              <button class="activity-button" data-motion="warmup">热身慢走</button>
+              <button class="activity-button active" data-motion="walk">匀速巡走</button>
+              <button class="activity-button" data-motion="run">加速冲刺</button>
+            </div>
+
+            <p class="panel-text" id="motion-description">
+              人物沿操场跑道稳定巡走，镜头可跟随移动，适合做基础演示与公开展示。
+            </p>
+
+            <label class="range-block" for="speed-range">
+              <span>细调速度</span>
+              <input id="speed-range" type="range" min="0.7" max="1.4" step="0.05" value="1" />
+            </label>
+
+            <div class="button-row">
+              <button class="ghost-button wide" id="pause-toggle">暂停巡走</button>
+              <button class="ghost-button wide" id="reset-view">重置视角</button>
+            </div>
+          </section>
+
+          <section class="surface side-card">
+            <div class="card-head">
+              <p class="eyebrow">Display</p>
+              <h2>展示控制</h2>
+            </div>
+
+            <label class="switch-row">
+              <input id="toggle-follow" type="checkbox" checked />
+              <span>启用跟拍辅助</span>
+            </label>
+            <label class="switch-row">
+              <input id="toggle-grid" type="checkbox" />
+              <span>显示辅助网格</span>
+            </label>
+            <label class="switch-row">
+              <input id="toggle-dusk" type="checkbox" />
+              <span>切换暮色灯光</span>
+            </label>
+
+            <ul class="guide-list">
+              <li>操场场景包含跑道、草坪、看台与灯杆，方便整体展示。</li>
+              <li>人物使用程序化骨骼摆动和路径行走，即使模型无内置动画也可演示。</li>
+              <li>适配桌面和移动端浏览，公网访问时默认加载压缩版人物模型。</li>
+            </ul>
+          </section>
+
+          <section class="surface side-card">
+            <div class="card-head">
+              <p class="eyebrow">Metrics</p>
+              <h2>实时信息</h2>
+            </div>
+
+            <div class="metrics-grid">
+              <article class="metric-card">
+                <span>模型大小</span>
+                <strong id="file-size">4.85 MB</strong>
+              </article>
+              <article class="metric-card">
+                <span>三角面数</span>
+                <strong id="triangle-count">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>材质数量</span>
+                <strong id="material-count">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>实时帧率</span>
+                <strong id="fps-count">-</strong>
+              </article>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
