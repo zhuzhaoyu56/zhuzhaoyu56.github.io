@@ -16,6 +16,18 @@ npm run build
 npm run preview:public
 ```
 
+如果要发布到带子路径的 GitHub Pages 地址，例如：
+
+```text
+https://zhuzhaoyu56.github.io/dingyikun/
+```
+
+使用：
+
+```bash
+npm run build:dingyikun
+```
+
 ## GitHub Pages 部署
 
 默认采用 GitHub Pages 分支发布模式：
@@ -33,4 +45,10 @@ zhuzhaoyu56.github.io
 
 ```text
 https://zhuzhaoyu56.github.io/
+```
+
+本项目的人物教室展示页也可以作为子路径发布：
+
+```text
+https://zhuzhaoyu56.github.io/dingyikun/
 ```

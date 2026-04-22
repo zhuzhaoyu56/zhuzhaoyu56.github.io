@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:dingyikun": "vite build --base /dingyikun/ --outDir dist-dingyikun",
     "preview": "vite preview",
     "preview:public": "vite preview --host 0.0.0.0 --port 4173"
   },

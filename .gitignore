@@ -1,3 +1,11 @@
 node_modules/
 dist/
+dist-dingyikun/
 .DS_Store
+preview.png
+preview-webgl.png
+playwright.png
+canvas.png
+canvas-overview.png
+canvas-book.png
+canvas-walk.png

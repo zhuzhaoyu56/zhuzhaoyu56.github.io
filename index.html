@@ -3,425 +3,192 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>履带小车基地控制台</title>
+    <title>教室学习人物三维可视化</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d8b8d'/%3E%3Cpath d='M16 20h32v6H16zm4 10h24v18H20zm6 4v10m6-10v10m6-10v10' stroke='%23fff6e8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"
     />
     <script type="module" src="/src/main.js"></script>
   </head>
   <body>
-    <div class="app-shell">
-      <header class="hero panel">
+    <div class="page-shell">
+      <header class="hero-card surface">
         <div class="hero-copy">
-          <p class="eyebrow">Tracked Vehicle Base Console</p>
-          <h1>履带小车基地三维控制台</h1>
+          <p class="eyebrow">Web Classroom Visualization</p>
+          <h1>人物模型教室学习三维展示页</h1>
           <p class="hero-text">
-            模型已接入基地级三维场景，页面针对操作进行了重排：速度、转向、视角和显示开关都固定在顶部操作台，不再需要向下滚动查找。
+            通过 Web 端三维可视化技术将人物模型接入浏览器，搭建教室环境，并提供学习、翻书、走动三种核心展示状态与基础交互。
           </p>
         </div>
-        <div class="hero-meta">
-          <div class="status-pill" id="status-pill">
+
+        <div class="hero-side">
+          <div class="status-badge" id="status-badge" data-state="loading">
             <span class="status-dot"></span>
-            <span id="status-text">等待加载</span>
+            <span id="status-text">准备加载场景</span>
           </div>
-          <p class="hero-subtext">模型文件：<span id="hero-model-name">tracked_car.glb</span></p>
+          <p class="file-hint">当前模型：<span id="model-file-label">丁.glb</span></p>
         </div>
       </header>
 
-      <section class="panel control-hub">
-        <div class="toolbar-row">
-          <div class="toolbar-group drive-strip">
-            <span class="toolbar-caption">控制</span>
-            <div class="button-row drive-actions">
-              <button class="viewer-button accent" id="btn-run">启动</button>
-              <button class="viewer-button" id="btn-pause">暂停</button>
-              <button class="viewer-button" id="btn-home">回原点</button>
-              <button class="viewer-button" id="btn-clear-trail">清轨迹</button>
+      <main class="content-grid">
+        <section class="stage-card surface">
+          <div class="stage-top">
+            <div class="title-block">
+              <p class="eyebrow">3D Stage</p>
+              <h2>教室实时场景</h2>
+            </div>
+
+            <div class="button-row compact">
+              <button class="ghost-button active" data-camera="overview">全景</button>
+              <button class="ghost-button" data-camera="desk">课桌近景</button>
+              <button class="ghost-button" data-camera="aisle">通道视角</button>
             </div>
           </div>
 
-          <div class="toolbar-group slider-strip">
-            <label class="range-inline" for="speed-slider">
-              <span class="inline-label">速度</span>
-              <input type="range" id="speed-slider" min="-1.8" max="1.8" step="0.05" value="0" />
-              <span class="inline-value" id="speed-readout">0.00 m/s</span>
-            </label>
-            <label class="range-inline" for="steer-slider">
-              <span class="inline-label">转向</span>
-              <input type="range" id="steer-slider" min="-100" max="100" step="1" value="0" />
-              <span class="inline-value" id="steer-readout">0%</span>
-            </label>
-          </div>
+          <div class="scene-shell" id="scene-shell">
+            <div class="scene-container" id="scene-container"></div>
 
-          <div class="toolbar-group telemetry-strip">
-            <article class="telemetry-compact">
-              <span class="telemetry-label">状态</span>
-              <strong id="drive-mode">待机</strong>
-            </article>
-            <article class="telemetry-compact">
-              <span class="telemetry-label">速度</span>
-              <strong id="drive-speed">0.00 m/s</strong>
-            </article>
-            <article class="telemetry-compact">
-              <span class="telemetry-label">转向</span>
-              <strong id="drive-steering">0%</strong>
-            </article>
-            <article class="telemetry-compact">
-              <span class="telemetry-label">航向</span>
-              <strong id="drive-heading">0.0°</strong>
-            </article>
-            <article class="telemetry-compact">
-              <span class="telemetry-label">位置</span>
-              <strong id="drive-position">(0.00, 0.00)</strong>
-            </article>
-            <article class="telemetry-compact">
-              <span class="telemetry-label">里程</span>
-              <strong id="drive-distance">0.00 m</strong>
-            </article>
-          </div>
-        </div>
+            <div class="loading-overlay" id="loading-overlay">
+              <div class="loading-card">
+                <span class="loading-label">正在读取人物模型与教室资源</span>
+                <strong id="loading-text">准备加载...</strong>
+                <div class="progress-track">
+                  <div class="progress-bar" id="progress-bar"></div>
+                </div>
+              </div>
+            </div>
 
-        <div class="toolbar-row secondary">
-          <div class="toolbar-group camera-strip">
-            <span class="toolbar-caption">视角</span>
-            <div class="button-row camera-grid">
-              <button class="viewer-button active" data-view="iso">等轴</button>
-              <button class="viewer-button" data-view="front">正视</button>
-              <button class="viewer-button" data-view="left">侧视</button>
-              <button class="viewer-button" data-view="top">俯视</button>
-              <button class="viewer-button" id="btn-reset-view">重置</button>
-              <button class="viewer-button" id="btn-fullscreen">全屏</button>
+            <div class="stage-hud">
+              <article class="hud-chip">
+                <span>当前模式</span>
+                <strong id="mode-readout">学习模式</strong>
+              </article>
+              <article class="hud-chip">
+                <span>镜头状态</span>
+                <strong id="camera-readout">全景总览</strong>
+              </article>
+              <article class="hud-chip">
+                <span>人物位置</span>
+                <strong id="position-readout">(0.00, 0.00)</strong>
+              </article>
             </div>
           </div>
 
-          <div class="toolbar-group toggle-strip">
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-follow" checked />
-              <span>跟随</span>
-            </label>
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-trail" checked />
-              <span>轨迹</span>
-            </label>
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-autorotate" />
-              <span>自转</span>
-            </label>
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-wireframe" />
-              <span>线框</span>
-            </label>
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-grid" checked />
-              <span>网格</span>
-            </label>
-            <label class="toggle-chip">
-              <input type="checkbox" id="toggle-axes" />
-              <span>坐标轴</span>
-            </label>
-          </div>
-        </div>
-      </section>
-
-      <main class="layout">
-        <section class="viewer-column">
-          <div class="panel viewer-panel">
-            <div class="viewer-header">
-              <div>
-                <p class="section-kicker">Viewport</p>
-                <h2>基地场景预览</h2>
-              </div>
-              <div class="viewer-caption" id="viewer-caption">加载完成后可直接拖拽查看</div>
-            </div>
-            <div class="viewer-stage" id="viewer-stage">
-              <div class="scene-container" id="scene-container"></div>
-              <div class="loading-panel" id="loading-panel">
-                <div class="loading-shell">
-                  <span class="loading-title">正在读取基地场景与小车模型</span>
-                  <strong id="loading-text">准备加载资源...</strong>
-                  <div class="progress-track">
-                    <div class="progress-fill" id="progress-fill"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="viewer-hud">
-                <div class="hud-card">
-                  <span class="hud-label">运动状态</span>
-                  <strong id="hud-mode">待机</strong>
-                </div>
-                <div class="hud-card">
-                  <span class="hud-label">当前速度</span>
-                  <strong id="hud-speed">0.00 m/s</strong>
-                </div>
-                <div class="hud-card">
-                  <span class="hud-label">航向角</span>
-                  <strong id="hud-heading">0.0°</strong>
-                </div>
-                <div class="hud-card">
-                  <span class="hud-label">当前位置</span>
-                  <strong id="hud-position">(0.00, 0.00)</strong>
-                </div>
-              </div>
-              <div class="minimap-panel">
-                <div class="minimap-header">
-                  <span>导航图</span>
-                  <strong id="mission-readout">手动控制</strong>
-                </div>
-                <canvas id="minimap-canvas" width="220" height="220"></canvas>
-                <div class="minimap-footer">
-                  <span id="route-status">未规划</span>
-                  <span>基地视图</span>
-                </div>
-              </div>
+          <div class="stage-footer">
+            <p id="scene-note">支持鼠标拖拽旋转、滚轮缩放，以及按钮切换人物动作与镜头。</p>
+            <div class="tag-row">
+              <span class="tag">Three.js</span>
+              <span class="tag">GLTFLoader</span>
+              <span class="tag">程序化翻页</span>
+              <span class="tag">教室环境搭建</span>
             </div>
           </div>
         </section>
 
         <aside class="sidebar">
-          <section class="panel card-stack">
-            <div class="section-title">
-              <p class="section-kicker">Model</p>
-              <h2>资源概况</h2>
+          <section class="surface panel-card">
+            <div class="title-block">
+              <p class="eyebrow">Activity</p>
+              <h2>动作编排</h2>
             </div>
-            <div class="metric-grid">
-              <article class="metric">
-                <span class="metric-label">文件大小</span>
-                <strong class="metric-value" id="stat-size">-</strong>
-              </article>
-              <article class="metric">
-                <span class="metric-label">网格数量</span>
-                <strong class="metric-value" id="stat-meshes">-</strong>
-              </article>
-              <article class="metric">
-                <span class="metric-label">材质数量</span>
-                <strong class="metric-value" id="stat-materials">-</strong>
-              </article>
-              <article class="metric">
-                <span class="metric-label">动画数量</span>
-                <strong class="metric-value" id="stat-animations">-</strong>
-              </article>
-            </div>
-            <dl class="detail-list">
-              <div>
-                <dt>模型名称</dt>
-                <dd id="stat-name">-</dd>
-              </div>
-              <div>
-                <dt>加载状态</dt>
-                <dd id="stat-status">等待加载</dd>
-              </div>
-              <div>
-                <dt>三角面数</dt>
-                <dd id="stat-triangles">-</dd>
-              </div>
-              <div>
-                <dt>顶点数量</dt>
-                <dd id="stat-vertices">-</dd>
-              </div>
-              <div>
-                <dt>包围尺寸</dt>
-                <dd id="stat-dimensions">-</dd>
-              </div>
-            </dl>
-            <div class="tag-list" id="model-tags"></div>
-          </section>
 
-          <section class="panel card-stack">
-            <div class="section-title">
-              <p class="section-kicker">Selection</p>
-              <h2>选中状态</h2>
+            <div class="activity-grid">
+              <button class="activity-button active" data-activity="study">学习</button>
+              <button class="activity-button" data-activity="book">翻书</button>
+              <button class="activity-button" data-activity="walk">走动</button>
             </div>
-            <div class="selection-card">
-              <span class="selection-label">当前对象</span>
-              <strong id="selection-value">未选中</strong>
-            </div>
-            <p class="note" id="selection-note">
-              当前模型加载后支持点击高亮。如果导出为单网格，点击时会高亮整车。
+
+            <p class="panel-text" id="activity-description">
+              人物停留在课桌旁，保持专注学习状态，书页缓慢翻动。
             </p>
           </section>
 
-          <section class="panel card-stack">
-            <div class="section-title">
-              <p class="section-kicker">Guide</p>
-              <h2>操作说明</h2>
+          <section class="surface panel-card">
+            <div class="title-block">
+              <p class="eyebrow">Display</p>
+              <h2>展示控制</h2>
             </div>
-            <ul class="instruction-list">
-              <li>左键拖拽环绕，滚轮缩放，右键拖拽平移。</li>
-              <li>顶部操作台固定展示高频控制，不再需要长距离滚动。</li>
-              <li>基地场景包含道路、建筑、围栏和功能分区。</li>
-              <li>如果后续要接真实底盘控制，可直接把速度和转向输入替换成接口数据。</li>
+
+            <div class="switch-list">
+              <label class="switch-row">
+                <input type="checkbox" id="toggle-auto" />
+                <span>自动轮播三种动作</span>
+              </label>
+              <label class="switch-row">
+                <input type="checkbox" id="toggle-follow" checked />
+                <span>走动时跟随镜头</span>
+              </label>
+              <label class="switch-row">
+                <input type="checkbox" id="toggle-grid" />
+                <span>显示地面辅助网格</span>
+              </label>
+              <label class="switch-row">
+                <input type="checkbox" id="toggle-night" />
+                <span>切换夜间自习氛围</span>
+              </label>
+            </div>
+
+            <div class="button-row">
+              <button class="ghost-button wide" id="btn-reset-camera">重置镜头</button>
+              <button class="ghost-button wide" id="btn-study-home">回到学习位</button>
+            </div>
+          </section>
+
+          <section class="surface panel-card">
+            <div class="title-block">
+              <p class="eyebrow">Metrics</p>
+              <h2>模型与场景信息</h2>
+            </div>
+
+            <div class="metric-grid">
+              <article class="metric-card">
+                <span>文件大小</span>
+                <strong id="stat-file-size">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>三角面数</span>
+                <strong id="stat-triangles">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>网格数量</span>
+                <strong id="stat-meshes">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>材质数量</span>
+                <strong id="stat-materials">-</strong>
+              </article>
+              <article class="metric-card">
+                <span>动作引擎</span>
+                <strong id="stat-animation">程序化</strong>
+              </article>
+              <article class="metric-card">
+                <span>场景单元</span>
+                <strong id="stat-scene">教室 9 套课桌</strong>
+              </article>
+            </div>
+          </section>
+
+          <section class="surface panel-card">
+            <div class="title-block">
+              <p class="eyebrow">Guide</p>
+              <h2>交互说明</h2>
+            </div>
+
+            <ul class="guide-list">
+              <li>鼠标左键拖拽旋转视角，滚轮缩放，右键平移。</li>
+              <li>点击“学习 / 翻书 / 走动”可以切换人物当前演示状态。</li>
+              <li>“自动轮播”会按顺序循环展示三种动作，适合做演示页面。</li>
+              <li>夜间模式会降低自然光并增强教室灯带，形成晚自习氛围。</li>
             </ul>
           </section>
         </aside>
       </main>
-
-      <section class="panel operations-deck">
-        <div class="operations-grid">
-          <section class="deck-card mission-card">
-            <div class="section-title">
-              <p class="section-kicker">Autonomy</p>
-              <h2>任务规划与自动巡航</h2>
-            </div>
-            <div class="button-row mission-preset-grid">
-              <button class="viewer-button" id="btn-load-perimeter">基地巡检</button>
-              <button class="viewer-button" id="btn-load-inspect">仓储巡检</button>
-              <button class="viewer-button" id="btn-load-return">返航路线</button>
-              <button class="viewer-button" id="btn-manual-route">手动布点</button>
-            </div>
-            <div class="button-row mission-action-grid">
-              <button class="viewer-button accent" id="btn-execute-route">执行路线</button>
-              <button class="viewer-button" id="btn-stop-route">停止自动</button>
-              <button class="viewer-button" id="btn-clear-route">清空路线</button>
-              <button class="viewer-button" id="btn-remove-waypoint">撤销航点</button>
-            </div>
-            <div class="mission-stats">
-              <article class="telemetry-compact">
-                <span class="telemetry-label">当前模式</span>
-                <strong id="autonomy-mode">手动</strong>
-              </article>
-              <article class="telemetry-compact">
-                <span class="telemetry-label">航点数量</span>
-                <strong id="route-count">0</strong>
-              </article>
-              <article class="telemetry-compact">
-                <span class="telemetry-label">路线长度</span>
-                <strong id="route-length">0.0 m</strong>
-              </article>
-              <article class="telemetry-compact">
-                <span class="telemetry-label">执行进度</span>
-                <strong id="route-progress">0 / 0</strong>
-              </article>
-            </div>
-            <div class="route-list-shell">
-              <div class="route-list-header">
-                <span>航点清单</span>
-                <span id="route-hint">开启“手动布点”后点击场景地面添加航点</span>
-              </div>
-              <div class="route-list" id="route-list"></div>
-            </div>
-          </section>
-
-          <section class="deck-card environment-card">
-            <div class="section-title">
-              <p class="section-kicker">Environment</p>
-              <h2>环境、灯光与传感器</h2>
-            </div>
-            <div class="control-cluster">
-              <label class="range-inline wide" for="time-slider">
-                <span class="inline-label">时间</span>
-                <input type="range" id="time-slider" min="0" max="24" step="0.25" value="14" />
-                <span class="inline-value" id="time-readout">14:00</span>
-              </label>
-            </div>
-            <div class="toggle-dashboard">
-              <label class="toggle-panel">
-                <div>
-                  <strong>雨天模拟</strong>
-                  <span>粒子雨幕与抓地衰减</span>
-                </div>
-                <input type="checkbox" id="toggle-rain" />
-              </label>
-              <label class="toggle-panel">
-                <div>
-                  <strong>前照灯</strong>
-                  <span>车体前向照明</span>
-                </div>
-                <input type="checkbox" id="toggle-headlights" />
-              </label>
-              <label class="toggle-panel">
-                <div>
-                  <strong>警示灯</strong>
-                  <span>车顶闪烁信标</span>
-                </div>
-                <input type="checkbox" id="toggle-beacon" checked />
-              </label>
-              <label class="toggle-panel">
-                <div>
-                  <strong>LiDAR</strong>
-                  <span>旋转激光雷达扫掠</span>
-                </div>
-                <input type="checkbox" id="toggle-lidar" checked />
-              </label>
-              <label class="toggle-panel">
-                <div>
-                  <strong>前向视场</strong>
-                  <span>相机视域锥体</span>
-                </div>
-                <input type="checkbox" id="toggle-camera-cone" checked />
-              </label>
-              <label class="toggle-panel">
-                <div>
-                  <strong>雷达脉冲</strong>
-                  <span>地面扫描波纹</span>
-                </div>
-                <input type="checkbox" id="toggle-radar" checked />
-              </label>
-            </div>
-          </section>
-
-          <section class="deck-card diagnostics-card">
-            <div class="section-title">
-              <p class="section-kicker">Diagnostics</p>
-              <h2>健康监控与事件日志</h2>
-            </div>
-            <div class="health-grid">
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>电量</span>
-                  <strong id="metric-battery-text">100%</strong>
-                </div>
-                <div class="health-bar"><span id="metric-battery-fill"></span></div>
-              </div>
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>链路</span>
-                  <strong id="metric-signal-text">100%</strong>
-                </div>
-                <div class="health-bar"><span id="metric-signal-fill"></span></div>
-              </div>
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>电机温度</span>
-                  <strong id="metric-motor-text">36°C</strong>
-                </div>
-                <div class="health-bar"><span id="metric-motor-fill"></span></div>
-              </div>
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>抓地力</span>
-                  <strong id="metric-traction-text">95%</strong>
-                </div>
-                <div class="health-bar"><span id="metric-traction-fill"></span></div>
-              </div>
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>计算负载</span>
-                  <strong id="metric-compute-text">18%</strong>
-                </div>
-                <div class="health-bar"><span id="metric-compute-fill"></span></div>
-              </div>
-              <div class="health-item">
-                <div class="health-label-row">
-                  <span>系统状态</span>
-                  <strong id="system-state-text">正常</strong>
-                </div>
-                <div class="health-bar"><span id="metric-health-fill"></span></div>
-              </div>
-            </div>
-            <div class="alert-strip" id="alert-strip"></div>
-            <div class="log-shell">
-              <div class="route-list-header">
-                <span>事件日志</span>
-                <span id="log-caption">最近系统事件</span>
-              </div>
-              <div class="event-log" id="event-log"></div>
-            </div>
-          </section>
-        </div>
-      </section>
     </div>
   </body>
 </html>
