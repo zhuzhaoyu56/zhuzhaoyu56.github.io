@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>校园无人机三维飞行控制台</title>
+    <link rel="icon" href="data:," />
+    <script type="module" crossorigin src="./assets/index-DXmaBt0g.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CEV9U-i0.css">
+  </head>
+  <body>
+    <main id="app">
+      <canvas id="scene" aria-label="校园无人机三维场景"></canvas>
+
+      <section id="loading" class="loading">
+        <div class="loading__bar"><span id="loading-bar"></span></div>
+        <strong id="loading-text">模型加载中 0%</strong>
+      </section>
+
+      <aside class="panel panel--left" aria-label="飞行控制">
+        <div class="panel__head">
+          <div>
+            <span class="eyebrow">UAV LAB</span>
+            <h1>校园空域</h1>
+          </div>
+          <button id="pause-btn" class="icon-btn" title="暂停/继续" aria-label="暂停/继续">
+            <i data-lucide="pause"></i>
+          </button>
+        </div>
+
+        <div class="control-grid">
+          <label class="control">
+            <span>速度 <output id="speed-value">8.0 m/s</output></span>
+            <input id="speed" type="range" min="0" max="24" step="0.5" value="8" />
+          </label>
+          <label class="control">
+            <span>高度 <output id="altitude-value">24 m</output></span>
+            <input id="altitude" type="range" min="3" max="80" step="1" value="24" />
+          </label>
+          <label class="control">
+            <span>航向 <output id="heading-value">0°</output></span>
+            <input id="heading" type="range" min="0" max="359" step="1" value="0" />
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button class="icon-btn" data-adjust="heading" data-step="-15" title="左转 15 度" aria-label="左转 15 度">
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+          <button class="icon-btn" data-adjust="speed" data-step="-1" title="减速" aria-label="减速">
+            <i data-lucide="minus"></i>
+          </button>
+          <button id="reset-btn" class="icon-btn icon-btn--wide" title="复位" aria-label="复位">
+            <i data-lucide="rotate-ccw-square"></i>
+          </button>
+          <button class="icon-btn" data-adjust="speed" data-step="1" title="加速" aria-label="加速">
+            <i data-lucide="plus"></i>
+          </button>
+          <button class="icon-btn" data-adjust="heading" data-step="15" title="右转 15 度" aria-label="右转 15 度">
+            <i data-lucide="rotate-cw"></i>
+          </button>
+        </div>
+
+        <div class="segmented" role="group" aria-label="任务模式">
+          <button data-mode="manual" class="is-active"><i data-lucide="gamepad-2"></i><span>手动</span></button>
+          <button data-mode="route"><i data-lucide="route"></i><span>巡航</span></button>
+          <button data-mode="orbit"><i data-lucide="orbit"></i><span>环绕</span></button>
+          <button data-mode="return"><i data-lucide="home"></i><span>返航</span></button>
+        </div>
+
+        <div class="two-col">
+          <label class="select-field">
+            <span>相机</span>
+            <select id="camera-mode">
+              <option value="chase">追踪</option>
+              <option value="fpv">机载</option>
+              <option value="top">俯视</option>
+              <option value="free">自由</option>
+            </select>
+          </label>
+          <label class="select-field">
+            <span>轨迹</span>
+            <select id="trail-mode">
+              <option value="on">显示</option>
+              <option value="off">隐藏</option>
+            </select>
+          </label>
+        </div>
+      </aside>
+
+      <aside class="panel panel--right" aria-label="飞行数据">
+        <div class="metrics">
+          <div><span>地速</span><strong id="metric-speed">0.0</strong><small>m/s</small></div>
+          <div><span>高度</span><strong id="metric-altitude">0.0</strong><small>m</small></div>
+          <div><span>爬升</span><strong id="metric-vspeed">0.0</strong><small>m/s</small></div>
+          <div><span>电量</span><strong id="metric-battery">100</strong><small>%</small></div>
+        </div>
+
+        <div class="attitude">
+          <div class="attitude__dial" id="attitude-dial">
+            <span></span>
+          </div>
+          <div class="attitude__data">
+            <p>姿态</p>
+            <strong id="metric-attitude">0° / 0°</strong>
+          </div>
+        </div>
+
+        <div class="control-grid control-grid--compact">
+          <label class="control">
+            <span>风速 <output id="wind-speed-value">2.0 m/s</output></span>
+            <input id="wind-speed" type="range" min="0" max="14" step="0.5" value="2" />
+          </label>
+          <label class="control">
+            <span>风向 <output id="wind-direction-value">70°</output></span>
+            <input id="wind-direction" type="range" min="0" max="359" step="1" value="70" />
+          </label>
+        </div>
+
+        <div class="switch-row">
+          <label class="switch">
+            <input id="wind-enabled" type="checkbox" checked />
+            <span>风场</span>
+          </label>
+          <label class="switch">
+            <input id="labels-enabled" type="checkbox" checked />
+            <span>标注</span>
+          </label>
+        </div>
+      </aside>
+
+      <canvas id="minimap" width="220" height="220" aria-label="小地图"></canvas>
+      <div id="status-chip" class="status-chip">手动飞行</div>
+    </main>
+  </body>
+</html>
