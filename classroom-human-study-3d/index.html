@@ -6,8 +6,8 @@
     <meta name="description" content="基于 Three.js 的教室人物模型三维可视化页面" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <title>课堂人物三维可视化</title>
-    <script type="module" crossorigin src="./assets/index-DXL4B7Qs.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BRptOWAr.css">
+    <script type="module" crossorigin src="./assets/index-CVnF1yI6.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DyI2m6t6.css">
   </head>
   <body>
     <div id="app">
@@ -106,7 +106,82 @@
           <span>面数</span>
           <strong id="triangles-readout">0</strong>
         </div>
+        <div class="readout">
+          <span>控制</span>
+          <strong id="control-readout">手动</strong>
+        </div>
+        <div class="readout">
+          <span>手势</span>
+          <strong id="gesture-mini-readout">无输入</strong>
+        </div>
+        <div class="readout">
+          <span>识别</span>
+          <strong id="recognition-readout">离线</strong>
+        </div>
       </section>
+
+      <aside class="gesture-console" aria-label="YOLO 手势控制">
+        <div class="gesture-console__head">
+          <div>
+            <p class="eyebrow">YOLO 2D Vision</p>
+            <strong>二维手势识别</strong>
+          </div>
+          <div class="gesture-actions">
+            <button id="gesture-collapse" class="icon-btn" title="折叠/展开识别窗口" aria-label="折叠/展开识别窗口">
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <button id="gesture-toggle" class="icon-btn" title="启动/关闭 YOLO 摄像头" aria-label="启动/关闭 YOLO 摄像头">
+              <i data-lucide="camera"></i>
+            </button>
+            <button id="gesture-calibrate" class="icon-btn" title="校准识别中位" aria-label="校准识别中位">
+              <i data-lucide="scan-line"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="gesture-console__body">
+          <div class="gesture-statusline">
+            <span id="gesture-state">离线</span>
+            <strong id="gesture-confidence">0%</strong>
+          </div>
+
+          <label class="gesture-switch">
+            <input id="gesture-enable" type="checkbox" />
+            <span>接管控制</span>
+            <strong id="gesture-enable-state">关闭</strong>
+          </label>
+
+          <div class="gesture-camera">
+            <video id="gesture-video" playsinline muted></video>
+            <canvas id="gesture-overlay" width="320" height="220"></canvas>
+          </div>
+
+          <div class="gesture-readout">
+            <span id="gesture-command">无输入</span>
+            <strong id="gesture-meta">--</strong>
+          </div>
+
+          <div class="gesture-process" aria-label="识别过程">
+            <div id="process-camera"><span></span><b>摄像头</b><em id="camera-meta">待启动</em></div>
+            <div id="process-model"><span></span><b>2D 模型</b><em id="model-meta">未加载</em></div>
+            <div id="process-infer"><span></span><b>手部识别</b><em id="infer-meta">等待画面</em></div>
+            <div id="process-output"><span></span><b>人物输出</b><em id="output-meta">停止</em></div>
+          </div>
+
+          <p id="gesture-error" class="gesture-error"></p>
+
+          <div class="axis-readouts">
+            <div>
+              <span>前进</span>
+              <i><b id="axis-forward"></b></i>
+            </div>
+            <div>
+              <span>转向</span>
+              <i><b id="axis-turn"></b></i>
+            </div>
+          </div>
+        </div>
+      </aside>
 
       <section id="loading-panel" class="loading-panel" aria-live="polite">
         <div class="loader-ring"></div>
