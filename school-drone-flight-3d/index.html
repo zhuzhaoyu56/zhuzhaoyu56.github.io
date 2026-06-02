@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>校园无人机三维飞行控制台</title>
     <link rel="icon" href="data:," />
-    <script type="module" crossorigin src="./assets/index-DXmaBt0g.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CEV9U-i0.css">
+    <script type="module" crossorigin src="./assets/index-LwKoh4GU.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-C1v9JEZ3.css">
   </head>
   <body>
     <main id="app">
@@ -63,6 +63,7 @@
 
         <div class="segmented" role="group" aria-label="任务模式">
           <button data-mode="manual" class="is-active"><i data-lucide="gamepad-2"></i><span>手动</span></button>
+          <button data-mode="gesture"><i data-lucide="hand"></i><span>YOLO</span></button>
           <button data-mode="route"><i data-lucide="route"></i><span>巡航</span></button>
           <button data-mode="orbit"><i data-lucide="orbit"></i><span>环绕</span></button>
           <button data-mode="return"><i data-lucide="home"></i><span>返航</span></button>
@@ -106,6 +107,13 @@
           </div>
         </div>
 
+        <div class="system-readouts">
+          <div><span>链路</span><strong id="metric-link">100%</strong></div>
+          <div><span>GPS</span><strong id="metric-gps">RTK</strong></div>
+          <div><span>净空</span><strong id="metric-clearance">0 m</strong></div>
+          <div><span>区域</span><strong id="metric-zone">安全</strong></div>
+        </div>
+
         <div class="control-grid control-grid--compact">
           <label class="control">
             <span>风速 <output id="wind-speed-value">2.0 m/s</output></span>
@@ -126,6 +134,67 @@
             <input id="labels-enabled" type="checkbox" checked />
             <span>标注</span>
           </label>
+        </div>
+      </aside>
+
+      <aside class="gesture-console" aria-label="YOLO 手势控制">
+        <div class="gesture-console__head">
+          <div>
+            <span class="eyebrow">YOLO 2D VISION</span>
+            <strong>二维手势识别</strong>
+          </div>
+          <div class="gesture-actions">
+            <button id="gesture-collapse" class="icon-btn" title="折叠/展开识别窗口" aria-label="折叠/展开识别窗口">
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <button id="gesture-toggle" class="icon-btn" title="启动/关闭 YOLO 摄像头" aria-label="启动/关闭 YOLO 摄像头">
+              <i data-lucide="camera"></i>
+            </button>
+            <button id="gesture-calibrate" class="icon-btn" title="校准双手中位" aria-label="校准双手中位">
+              <i data-lucide="scan-line"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="gesture-console__body">
+          <div class="gesture-statusline">
+            <span id="gesture-state">离线</span>
+            <strong id="gesture-confidence">0%</strong>
+          </div>
+
+          <div class="gesture-camera">
+            <video id="gesture-video" playsinline muted></video>
+            <canvas id="gesture-overlay" width="320" height="220"></canvas>
+          </div>
+
+          <div class="gesture-readout">
+            <span id="gesture-command">无输入</span>
+            <strong id="gesture-meta">--</strong>
+          </div>
+
+          <div class="gesture-process" aria-label="识别过程">
+            <div id="process-camera"><span></span><b>摄像头</b><em id="camera-meta">待启动</em></div>
+            <div id="process-model"><span></span><b>2D 模型</b><em id="model-meta">未加载</em></div>
+            <div id="process-infer"><span></span><b>双手识别</b><em id="infer-meta">等待画面</em></div>
+            <div id="process-output"><span></span><b>飞控输出</b><em id="output-meta">悬停</em></div>
+          </div>
+
+          <p id="gesture-error" class="gesture-error"></p>
+
+          <div class="axis-readouts">
+            <div>
+              <span>右手前后</span>
+              <i><b id="axis-forward"></b></i>
+            </div>
+            <div>
+              <span>右手左右</span>
+              <i><b id="axis-strafe"></b></i>
+            </div>
+            <div>
+              <span>左手升降</span>
+              <i><b id="axis-vertical"></b></i>
+            </div>
+          </div>
         </div>
       </aside>
 
