@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YOLO 手势高速公路无人机控制</title>
+    <script type="module" crossorigin src="/highway-drone-yolo-control/assets/index-SmUgFEUW.js"></script>
+    <link rel="stylesheet" crossorigin href="/highway-drone-yolo-control/assets/index-ByVVmHci.css">
+  </head>
+  <body>
+    <main id="app" aria-label="YOLO 手势高速公路无人机控制台">
+      <canvas id="sceneCanvas"></canvas>
+
+      <header class="top-hud" aria-label="飞行状态">
+        <div class="brand-block">
+          <span class="eyebrow">YOLO-GESTURE FAST PATH</span>
+          <strong>高速公路无人机二维手势控制</strong>
+        </div>
+        <dl class="metric-strip">
+          <div>
+            <dt>高度</dt>
+            <dd id="altitudeReadout">0.0 m</dd>
+          </div>
+          <div>
+            <dt>速度</dt>
+            <dd id="speedReadout">0.0 m/s</dd>
+          </div>
+          <div>
+            <dt>识别</dt>
+            <dd id="gestureReadout">等待</dd>
+          </div>
+          <div>
+            <dt>延迟</dt>
+            <dd id="latencyReadout">0 ms</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section class="control-dock" aria-label="二维滑条控制">
+        <div class="dock-title">
+          <span>二维滑条</span>
+          <output id="vectorReadout">前 0 / 右 0</output>
+        </div>
+        <label class="range-row">
+          <span>前后</span>
+          <input id="forwardSlider" type="range" min="-100" max="100" value="18" step="1" />
+          <output id="forwardValue">前 18%</output>
+        </label>
+        <label class="range-row">
+          <span>左右</span>
+          <input id="lateralSlider" type="range" min="-100" max="100" value="-10" step="1" />
+          <output id="lateralValue">左 10%</output>
+        </label>
+        <button id="resetButton" class="reset-button" type="button">归零</button>
+      </section>
+
+      <section class="vision-panel" aria-label="左下角 YOLO 图像识别显示框">
+        <div class="vision-header">
+          <span>YOLO RT HAND</span>
+          <output id="visionPerf">0 FPS</output>
+        </div>
+        <video id="cameraVideo" playsinline muted></video>
+        <canvas id="visionCanvas" width="384" height="232"></canvas>
+        <div class="camera-toolbar" aria-label="摄像头识别控制">
+          <button id="startCameraButton" class="camera-button" type="button">启动摄像头</button>
+          <output id="cameraStatus">模型待机</output>
+        </div>
+      </section>
+
+      <div class="center-reticle" aria-hidden="true">
+        <span></span>
+        <span></span>
+      </div>
+    </main>
+  </body>
+</html>
